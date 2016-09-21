@@ -1,0 +1,121 @@
+{% extends ":default:layout.html.twig" %}
+{% block form %}
+    {{ form_start(form) }}
+    {{ form_widget(form) }}
+    {{ form_end(form) }}
+{% endblock %}
+{% block twit %}
+    {% if twits is empty %}
+        {% if post == 'POST' %}
+            <h2 xmlns="http://www.w3.org/1999/html">Aucun top tweets</h2>
+        {% endif %}
+    {% else %}
+        <h2>Top Tweet(s) last 24 hours</h2>
+        {% set count = 0 %}
+        {% for twit in twits %}
+            <section style="background-color: #C4F9FF; float: left; border-radius: 7px; padding: 3%; width: 95%; margin: 1%; position: relative;">
+                <img src="https://g.twimg.com/Twitter_logo_blue.png" width="3%" height="3%"/>
+                <a href="http://twitter.com/{{ twit.user }}">{{ twit.user }}</a>
+                <p>{{ twit.contents }}</p>
+                <p>{{ twit.createAt|date('Y-m-d') }}</p>
+                <p>{{ twit.location }}</p>
+                {% if sentiments[count]['status'] == 'OK' %}
+                    <p>Tweet sentiment: {{ sentiments[count]['docSentiment']['type'] }}</p>
+                {% endif %}
+            </section>
+            {% set count = count + 1 %}
+        {% endfor %}
+    {% endif %}
+{% endblock %}
+{% block render %}
+    {% if twits is not empty %}
+        <script>
+            $(function(){
+                $("#doughnutChart").drawDoughnutChart([
+                    { title: "Tweets count", value : {{ twits|length}},  color: "#C4F9FF" }
+                ]);
+            });
+        </script>
+        <h2 id="scroll" href="#">Sentiment Analysis Report</h2>
+        <section style="background-color: #D5D5D5; float: left; border-radius: 7px; padding: 3%; width: 95%; margin: 1%; position: relative; height: 500px;">
+            <section style="position: relative; width: 33%; margin-left: 58%; margin-top: 17%;">
+                <div id="doughnutChart" class="chart"></div>
+            </section>
+        {% set type_pos = 0 %}
+        {% set type_net = 0 %}
+        {% set type_neg = 0 %}
+        {% for sent in sentiments %}
+            {% if sent['status'] == 'OK' %}
+                {% if sent['docSentiment']['type'] == 'positive' %}
+                    {% set type_pos = type_pos + 1 %}
+                {% elseif sent['docSentiment']['type'] == 'neutral' %}
+                    {% set type_net = type_net + 1 %}
+                {% elseif sent['docSentiment']['type'] == 'negative' %}
+                    {% set type_neg = type_neg + 1 %}
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+        <script>
+                $(function(){
+                $("#pos").drawDoughnutChart([
+                { title: "Tweets Positifs", value : {{ type_pos }},  color: "green" }
+                ]);
+                });
+                $(function(){
+                $("#net").drawDoughnutChart([
+                { title: "Tweets Neutres", value : {{ type_net }},  color: "yellow" }
+                ]);
+                });
+                $(function(){
+                $("#neg").drawDoughnutChart([
+                { title: "Tweets Negatifs", value : {{ type_neg }},  color: "red" }
+                ]);
+                });
+        </script>
+        <section style="position: relative; width: 33%; margin-left: 26%; margin-top: 45%;">
+            <div id="pos" class="chart"></div>
+        </section>
+            <section style="position: relative; width: 33%; margin-top: 74%; margin-left: 57%;">
+                <div id="net" class="chart"></div>
+            </section>
+            <section style="position: relative; width: 33%; margin-top: -28%; margin-left: 90%;">
+                <div id="neg" class="chart"></div>
+            </section>
+        </section>
+    {% endif %}
+{% endblock %}
+{% block loader %}
+<svg version="1.1" id="L7" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+     viewBox="0 0 100 100" enable-background="new 0 0 100 100" xml:space="preserve" style="background-color: white;">
+     <path fill="#62befc" d="M31.6,3.5C5.9,13.6-6.6,42.7,3.5,68.4c10.1,25.7,39.2,38.3,64.9,28.1l-3.1-7.9c-21.3,8.4-45.4-2-53.8-23.3c-8.4-21.3,2-45.4,23.3-53.8L31.6,3.5z">
+         <animateTransform
+                 attributeName="transform"
+                 attributeType="XML"
+                 type="rotate"
+                 dur="2s"
+                 from="0 50 50"
+                 to="360 50 50"
+                 repeatCount="indefinite" />
+     </path>
+    <path fill="#62befc" d="M42.3,39.6c5.7-4.3,13.9-3.1,18.1,2.7c4.3,5.7,3.1,13.9-2.7,18.1l4.1,5.5c8.8-6.5,10.6-19,4.1-27.7c-6.5-8.8-19-10.6-27.7-4.1L42.3,39.6z">
+        <animateTransform
+                attributeName="transform"
+                attributeType="XML"
+                type="rotate"
+                dur="1s"
+                from="0 50 50"
+                to="-360 50 50"
+                repeatCount="indefinite" />
+    </path>
+    <path fill="#62befc" d="M82,35.7C74.1,18,53.4,10.1,35.7,18S10.1,46.6,18,64.3l7.6-3.4c-6-13.5,0-29.3,13.5-35.3s29.3,0,35.3,13.5L82,35.7z">
+        <animateTransform
+                attributeName="transform"
+                attributeType="XML"
+                type="rotate"
+                dur="2s"
+                from="0 50 50"
+                to="360 50 50"
+                repeatCount="indefinite" />
+    </path>
+</svg>
+{% endblock %}

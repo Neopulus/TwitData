@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>{% block title %} Twit Data {% endblock %}</title>
+
+        {% block stylesheets %}
+            <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+            <link rel="stylesheet" href="{{ asset('assets/css/chart.css') }}">
+            <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+            <script type="text/javascript" src="{{ asset('assets/js/chart.js') }}"></script>
+
+        {% endblock %}
+    </head>
+    <body onload=' location.href="#scroll"'>
+        <div class="container">
+            <div style="background-image: url('../assets/logo.jpg'); height: 232px; background-position: center center; background-size: 65% auto; width: 76%; margin: auto;" id="header" class="jumbotron">
+            </div>
+            </br>
+            <div id="form" style="margin: auto; padding: 2%; width: 23%; border: medium solid #D8DEDE; border-radius: 12px;">
+                {% block form %}
+                {% endblock %}
+            </div>
+            <div class="svg">
+                {% block loader %}
+                {% endblock %}
+            </div>
+            <div style="width: 49%; display: table-cell">
+                {% block twit %}
+                {% endblock %}
+            </div>
+            <div style="width: 49%; display: table-cell">
+                {% block render %}
+                {% endblock %}
+            </div>
+        </div>
+        </br>
+        <div class="footer">Copyright SCC1 - All rights reserved</div>
+        <script type="text/javascript">
+            $("button").click(function () {
+                $('.svg').css('visibility', 'visible');
+                $('#form').css('visibility', 'hidden');
+                return true;
+            });
+        </script>
+    </body>
+</html>

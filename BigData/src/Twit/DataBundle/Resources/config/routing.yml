@@ -1,0 +1,3 @@
+twit_data_index:
+    path:     /BigData
+    defaults: { _controller: TwitDataBundle:Twit:index }
